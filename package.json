@@ -1,0 +1,15 @@
+{
+  "name": "Twt1restapi",
+  "version": "1.0.0",
+  "description": "A simple JSON server example",
+  "main": "index.js",
+  "scripts": {
+    "start": "json-server --watch mock-data/bd.json"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "json-server": "^0.17.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
