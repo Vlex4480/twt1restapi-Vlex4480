@@ -1,1 +1,175 @@
 <!-- Página CRUD de Alunos -->
+ <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD de Alunos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4 bg-light">
+
+<div id="app" class="container">
+  <h1 class="mb-4">Gerenciamento de Alunos</h1>
+
+  <!-- Toast -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="toast align-items-center text-bg-success border-0" role="alert" ref="toast" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">{{ toastMessage }}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="hideToast"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulário -->
+  <form @submit.prevent="salvarAluno" class="row g-3 mb-4">
+    <input type="hidden" v-model="aluno.id">
+    <div class="col-md-4">
+      <input type="text" class="form-control" placeholder="Nome" v-model="aluno.nome" required>
+    </div>
+    <div class="col-md-4">
+      <input type="text" class="form-control" placeholder="Apelido" v-model="aluno.apelido" required>
+    </div>
+    <div class="col-md-2">
+      <input type="number" class="form-control" placeholder="Ano" v-model="aluno.anoCurricular" required>
+    </div>
+    <div class="col-md-2">
+      <input type="number" class="form-control" placeholder="Idade" v-model="aluno.idade" required>
+    </div>
+    <div class="col-md-4">
+      <select class="form-select" v-model="aluno.curso" required>
+        <option value="">Selecione o curso</option>
+        <option v-for="curso in cursos" :key="curso.id" :value="curso.id">{{ curso.nomeDoCurso }}</option>
+      </select>
+    </div>
+    <div class="col-md-12">
+      <button type="submit" class="btn btn-primary">{{ aluno.id ? 'Atualizar' : 'Criar' }}</button>
+      <button type="button" class="btn btn-secondary ms-2" @click="resetForm">Cancelar</button>
+    </div>
+  </form>
+
+  <!-- Lista de alunos -->
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>Nome</th>
+        <th>Apelido</th>
+        <th>Ano</th>
+        <th>Idade</th>
+        <th>Curso</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="aluno in alunos" :key="aluno._id">
+        <td>{{ aluno.nome }}</td>
+        <td>{{ aluno.apelido }}</td>
+        <td>{{ aluno.anoCurricular }}</td>
+        <td>{{ aluno.idade }}</td>
+        <td>{{ aluno.cursoNome }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" @click="editarAluno(aluno)">Editar</button>
+          <button class="btn btn-sm btn-danger" @click="deletarAluno(aluno._id)">Excluir</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Vue & Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/vue@3.4.15/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const { createApp, ref } = Vue;
+
+createApp({
+  data() {
+    return {
+      alunos: [],
+      baseUrl:'http://localhost:5000', 
+      cursos: [],
+      aluno: {
+        id: '',
+        nome: '',
+        apelido: '',
+        anoCurricular: '',
+        curso: '',
+        idade: ''
+      },
+      toastMessage: '',
+      toastInstance: null
+    }
+  },
+  mounted() {
+    this.toastInstance = new bootstrap.Toast(this.$refs.toast);
+    this.carregarCursos();
+    this.carregarAlunos();
+  },
+  methods: {
+    showToast(message) {
+      this.toastMessage = message;
+      this.toastInstance.show();
+    },
+    hideToast() {
+      this.toastInstance.hide();
+    },
+    resetForm() {
+      this.aluno = { id: '', nome: '', apelido: '', anoCurricular: '', curso: '', idade: '' };
+    },
+    async carregarCursos() {
+      const res = await fetch(`${this.baseUrl}/cursos`);
+      this.cursos = await res.json();
+    },
+    async carregarAlunos() {
+      const res = await fetch(`${this.baseUrl}/alunos`);
+      this.alunos = await res.json();
+    },
+    async salvarAluno() {
+      if (this.aluno.id) {
+        // Atualizar
+        const res = await fetch(`${this.baseUrl}/aluno-update`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...this.aluno, id: this.aluno.id })
+        });
+        if (res.ok) {
+          this.showToast('Aluno atualizado com sucesso');
+        }
+      } else {
+        // Criar
+        const res = await fetch(`${this.baseUrl}/aluno-create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(this.aluno)
+        });
+        if (res.ok) {
+          this.showToast('Aluno criado com sucesso');
+        }
+      }
+      this.resetForm();
+      this.carregarAlunos();
+    },
+    editarAluno(aluno) {
+      this.aluno = {
+        id: aluno._id,
+        nome: aluno.nome,
+        apelido: aluno.apelido,
+        anoCurricular: aluno.anoCurricular,
+        curso: aluno.curso,
+        idade: aluno.idade
+      };
+    },
+    async deletarAluno(id) {
+      if (!confirm('Tem certeza que deseja excluir este aluno?')) return;
+      const res = await fetch(`${this.baseUrl}/aluno-delete/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        this.showToast('Aluno deletado com sucesso');
+        this.carregarAlunos();
+      }
+    }
+  }
+}).mount('#app');
+</script>
+</body>
+</html>
