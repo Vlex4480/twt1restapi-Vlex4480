@@ -1,31 +1,30 @@
 # Twt1restapi
-A simple JSON server example
-## Installation
-To install the dependencies, run:
+Um exemplo simples de servidor JSON
+## Instalação
+Para instalar as dependências, execute:
 ```bash
 npm install
 ```
 ## Scripts
-To start the JSON server, run:
+Para iniciar o servidor JSON, execute:
 ```bash
 npm start
 ```
-To start the backend server, run:
+Para iniciar o servidor backend, execute:
 ```bash
 npm run startBackend
 ```
-<!-- open the index html locally after run backend server -->
-## Usage
-Open your browser and navigate to `http://localhost:3000` to view the JSON server.
-To view the backend server, navigate to `http://localhost:5000` in a separate tab.
-Open the `frontend/index.html` file in your browser to interact with the backend server.
+<!-- abra o índice HTML localmente após executar o servidor backend -->
+## Uso
+Abra seu navegador e navegue até `http://localhost:3000` para visualizar o servidor JSON.
+Para visualizar o servidor backend, navegue até `http://localhost:5000` em uma aba separada.
+Abra o arquivo `frontend/index.html` em seu navegador para interagir com o servidor backend.
 
-## API Endpoints
+## Pontos de extremidade da API
 ### Alunos
-- `GET /alunos`: Retrieve all students.
-- `POST /aluno-update`: Update a student's information.
-- `DELETE /aluno-delete/:id`: Delete a student by ID.
-- `POST /aluno-create`: Create a new student.
+- `GET /alunos`: Lisatagem de todos os alunos.
+- `POST /aluno-update`: Atualiza as informações de um aluno.
+- `DELETE /aluno-delete/:id`: Exclui um aluno pelo ID.
+- `POST /aluno-create`: Cria um novo aluno.
 ### Cursos
-- `GET /cursos`: Retrieve all courses.
-
+- `GET /cursos`: Listagem de todos os cursos.
