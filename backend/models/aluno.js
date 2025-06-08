@@ -5,6 +5,7 @@ const alunoSchema = new mongoose.Schema({
   apelido: String,
   anoCurricular: Number,
   curso: Number,
+  cursoNome: String,
   idade: Number,
 });
 
