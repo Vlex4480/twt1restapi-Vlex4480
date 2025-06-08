@@ -19,10 +19,14 @@ mongoose.connect(process.env.MONGO_URI, {
 
 
 app.get('/alunos', async (req, res) => {
-    
-
     try {
         const alunos = await Aluno.find({});
+        for (var aluno of alunos) {
+            const curso = await Curso.findOne({id: aluno.curso});
+            if (curso) {
+                aluno.cursoNome = curso.nomeDoCurso;
+            }
+        }
         res.json(alunos);
     } catch (err) {
         res.status(500).json({ error: 'Erro ao buscar alunos' });
